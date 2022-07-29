@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Button Using Checkbox</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+
+<body onload="startConnect()">
+
+    <span id="trash-message"></span>
+    <label>
+        <input type="checkbox" id="button-status" value="">
+        <span class="btn"></span>
+        <i class="fa fa-power-off"></i>
+    </label>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.min.js"></script>
+    <script src="demo.js"></script>
+    <script>
+        $(document).ready(function () {
+            var data
+            var message
+
+            function messageZero() {
+                message = new Paho.MQTT.Message("0");
+                message.destinationName = "inTopic";
+                client.send(message);
+                data = message.payloadString;
+            }
+
+            function messageActive() {
+                message = new Paho.MQTT.Message("1");
+                message.destinationName = "inTopic";
+                client.send(message);
+                data = message.payloadString;
+            }
+
+            setTimeout(() => {
+                messageZero()
+                console.log(data);
+
+                if (data == 1) {
+                    $('#button-status').attr('checked', true)
+                    $('#button-status').val("1")
+                } else if (data == 0) {
+                    $('#button-status').attr('checked', false)
+                    $('#button-status').val("0")
+                }
+
+            }, 1500);
+            $('#button-status').click(function (e) {
+                if (data == 0) {
+                    messageActive()
+                } else if (data == 1) {
+                    messageZero()
+                }
+                console.log(data)
+
+            });
+
+        });
+    </script>
+</body>
+
+</html>
